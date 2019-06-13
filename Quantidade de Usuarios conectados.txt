@@ -1,0 +1,11 @@
+SELECT *
+FROM sys.dm_os_performance_counters
+WHERE counter_name = 'User Connections';
+
+
+-- quant detalhada
+SELECT *
+FROM sys.dm_exec_connections
+
+-- processos
+SELECT * from sys.sysprocesses where sql_handle !='0x0000000000000000000000000000000000000000'                
