@@ -1,0 +1,41 @@
+SELECT
+    SE5.R_E_C_N_O_  AS SE5REC,
+    FK2.R_E_C_N_O_  AS FK2REC,
+    FK7.R_E_C_N_O_  AS FK7REC,
+    FKA.R_E_C_N_O_  AS FKAREC,
+    FKA2.R_E_C_N_O_ AS FKA2REC
+FROM
+    SE5050 SE5
+    LEFT JOIN FK2050 FK2 ON (
+        FK2_FILIAL = '01'
+        AND FK2_IDFK2 = E5_IDORIG
+        AND FK2.D_E_L_E_T_ = ' '
+    )
+    LEFT JOIN FK7050 FK7 ON (
+        FK7_FILIAL = '01'
+        AND FK7_IDDOC = FK2_IDDOC
+        AND FK7.D_E_L_E_T_ = ' '
+    )
+    LEFT JOIN FKA050 FKA ON (
+        FKA.FKA_FILIAL = '01'
+        AND FKA.FKA_IDORIG = E5_IDORIG
+        AND FKA.FKA_TABORI = 'FK2'
+        AND FKA.D_E_L_E_T_ = ' '
+    )
+    LEFT JOIN FKA050 FKA2 ON (
+        FKA2.FKA_FILIAL = '01'
+        AND FKA2.FKA_IDPROC = FKA.FKA_IDPROC
+        AND FKA2.FKA_TABORI = 'FK5'
+        AND FKA2.D_E_L_E_T_ = ' '
+    )
+    LEFT JOIN FK5050 FK5 ON (
+        FK5_FILIAL = '01'
+        AND FK5_IDMOV = FKA2.FKA_IDORIG
+        AND FK5.D_E_L_E_T_ = ' '
+    )
+WHERE
+    E5_FILIAL = '01'
+    AND E5_NUMERO = '028032019'
+    AND E5_PREFIXO = '   '
+	AND E5_CLIFOR ='1'
+    AND SE5.D_E_L_E_T_ != ' ';
