@@ -1,0 +1,10 @@
+Backup e restore de uma unica tabela no sqlserver
+
+COPIAR
+
+BCP.EXE "select * from P12HLG.dbo.SC5010 where C5_EMISSAO BETWEEN '20190701' AND '20190705' " queryout "Customer.bcp" -N -S CF-HOMOLOG\TOPHLG -T -E
+
+
+RESTORE
+
+bcp P12HLG.dbo.SC5010_BKP in "Customer.bcp" -N -S CF-HOMOLOG\TOPHLG -T -E -b 10000
