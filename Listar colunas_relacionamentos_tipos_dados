@@ -1,0 +1,57 @@
+-- SIGFIS MAPEAMENTOS --
+SELECT 
+	TABLE_CATALOG Banco,
+	TABLE_SCHEMA Schem,
+	TABLE_NAME Tabela,	
+	COLUNAS.name Coluna,
+	TIPOS.name Tipo,
+	TIPOS.max_length,
+	TIPOS.precision,
+	TIPOS.scale,
+	TIPOS.is_nullable,
+	COLUNAS.is_identity,
+	CHAVE_ESTRANGEIRA.foreign_key_name,
+	CHAVE_ESTRANGEIRA.referenced_object Tabela_referenciada,
+	CHAVE_ESTRANGEIRA.referenced_column_name Coluna_referenciada,
+	COLUNAS.object_id	
+FROM 
+	NOME_BANCO.sys.databases as DB
+INNER JOIN 
+	NOME_BANCO.INFORMATION_SCHEMA.TABLES as TB
+ON 
+    DB.name = TB.TABLE_CATALOG AND TB.TABLE_NAME ='Nome_tabela' and TB.TABLE_SCHEMA ='Nome_Schema' 
+INNER JOIN
+	NOME_BANCO.sys.all_columns COLUNAS
+ON
+   object_id = object_id(N'Nome_Banco.Nome_Schema.Nome_Tabela')
+INNER JOIN
+    NOME_BANCO.sys.types TIPOS
+ON
+	COLUNAS.system_type_id = TIPOS.system_type_id and
+	COLUNAS.user_type_id = TIPOS.user_type_id
+LEFT JOIN
+	(
+SELECT   
+    f.name AS foreign_key_name  
+   ,OBJECT_NAME(f.parent_object_id) AS table_name_estrang
+   ,COL_NAME(fc.parent_object_id, fc.parent_column_id) AS constraint_column_name  
+   ,OBJECT_NAME (f.referenced_object_id) AS referenced_object  
+   ,COL_NAME(fc.referenced_object_id, fc.referenced_column_id) AS referenced_column_name  
+   ,is_disabled  
+   ,delete_referential_action_desc  
+   ,update_referential_action_desc  
+FROM sys.foreign_keys AS f  
+INNER JOIN sys.foreign_key_columns AS fc   
+   ON f.object_id = fc.constraint_object_id   
+WHERE f.parent_object_id = object_id(N'Nome_Banco.Nome_Schema.Nome_Tabela')
+) AS CHAVE_ESTRANGEIRA
+ON 
+	COLUNAS.name = CHAVE_ESTRANGEIRA.constraint_column_name 
+ORDER BY 
+	BANCO,
+	COLUNA
+
+
+
+
+
